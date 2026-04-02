@@ -1,0 +1,68 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# Xcode build artifacts
+build/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Package.resolved
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# Code coverage
+*.xccoverage
+*.xccovreport
+
+# Archives and temporary files
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.hmap
+*.ipa
+*.app
+*.tmp
+*.swp
+*.lock
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Firebase / Google Service local overrides (optional)
+GoogleService-Info.plist
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
