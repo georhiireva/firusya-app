@@ -67,7 +67,7 @@ private extension ChatView {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 6) {
-                    ForEach(messages, id: \.id) { message in
+                    ForEach(messages, id: \.persistentModelID) { message in
                         MessageRowView(message: message)
                             .id(message.id)
                             .padding(.horizontal, 12)
