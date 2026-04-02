@@ -9,10 +9,13 @@ import SwiftUI
 import SwiftData
 
 @main
-struct firusya_appApp: App {
+struct firusyaApp: App {
+    @State private var appState = AppState()
+    @State private var contactsStore = ContactsStore()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Message.self, Contact.self, Chat.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +28,10 @@ struct firusya_appApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(appState)
+                .environment(appState.router)
+                .environment(contactsStore)
         }
         .modelContainer(sharedModelContainer)
     }
