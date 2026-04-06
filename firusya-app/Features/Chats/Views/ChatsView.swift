@@ -13,17 +13,7 @@ struct ChatsView: View {
     @Environment(Router.self) private var router
     @Environment(\.modelContext) private var context
     @Query private var allChats: [Chat]
-    private let chat1 = Chat(
-        id: "1",
-        contact: Contact(
-            id: "id-1",
-            displayName: "Oleg",
-            subtitle: nil,
-            avatar: UIImage(named: "Image")?.pngData()
-        ),
-        peerId: "1",
-        title: "1",
-    )
+
     
     var body: some View {
         
@@ -46,8 +36,6 @@ struct ChatsView: View {
                 }
                 
             }
-        }.onAppear {
-            context.insert(chat1)
         }
         
     }
