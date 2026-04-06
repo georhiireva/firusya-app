@@ -44,7 +44,7 @@ struct MessageRowView: View {
         .background(isIncoming ? Color.white : Color(red: 0.86, green: 0.97, blue: 0.77))
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .shadow(color: .black.opacity(0.07), radius: 1.5, x: 0, y: 1)
-        .frame(maxWidth: 300, alignment: .leading)
+        .frame(maxWidth: 300, alignment: .trailing)
     }
 }
 
