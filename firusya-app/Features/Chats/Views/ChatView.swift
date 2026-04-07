@@ -94,7 +94,7 @@ private extension ChatView {
     }
 
     var inputBar: some View {
-        HStack(alignment: .bottom, spacing: 8) {
+        HStack(alignment: .center, spacing: 8) {
             Button {
                 // attachment
             } label: {
@@ -102,25 +102,31 @@ private extension ChatView {
                     .font(.system(size: 24, weight: .medium))
                     .foregroundStyle(Color.blue)
             }
+            .frame(width: 26, height: 26)
 
             HStack(alignment: .bottom, spacing: 8) {
                 TextField("Message", text: $text, axis: .vertical)
                     .textFieldStyle(.plain)
                     .lineLimit(1...5)
 
-                if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(.secondary)
-                } else {
-                    Button {
-                        sendMessage()
-                    } label: {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .font(.system(size: 26))
-                            .foregroundStyle(Color.blue)
+                Group {
+                    if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Image(systemName: "mic.fill")
+                            .font(.system(size: 17, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Button {
+                            sendMessage()
+                        } label: {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .font(.system(size: 26))
+                                .foregroundStyle(Color.blue)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
+                .frame(width: 26, height: 26, alignment: .center)
+                .contentShape(Rectangle())
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
