@@ -7,7 +7,19 @@
 import SwiftUI
 
 struct CallsNavHost: View {
+    @Environment(Router.self) private var router
+
     var body: some View {
-        Text("CallsView!")
+        @Bindable var router = router
+        NavigationStack(path: $router.callsPath) {
+            CallsView()
+                .navigationTitle("Calls")
+                .navigationDestination(for: CallsRoute.self) { route in
+                    switch route {
+                    case .callDetails(let callId):
+                        Text("Call details \(callId)")
+                    }
+                }
+        }
     }
 }

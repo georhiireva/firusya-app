@@ -7,9 +7,8 @@
 import SwiftUI
 
 struct MainTabView : View {
-    
     @Environment(Router.self) private var router
-    
+
     var body: some View {
         @Bindable var router = router
         TabView(selection: $router.selectedTab) {
@@ -51,7 +50,7 @@ struct MainTabView : View {
                         Image(systemName: "gear")
                     }
                 }
-                .tag(AppTab.contacts)
+                .tag(AppTab.settings)
         }
         .sheet(item: $router.presentedSheet) { sheet in
             switch sheet {

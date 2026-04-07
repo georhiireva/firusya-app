@@ -7,27 +7,26 @@
 import SwiftUI
 
 @Observable final class Router {
-    
     var selectedTab: AppTab = .chats
-    
+
     var chatsPath = NavigationPath()
     var contactsPath = NavigationPath()
     var callsPath = NavigationPath()
     var settingsPath = NavigationPath()
-    
+
     var presentedSheet: AppSheet?
-    var presentedFullScreen: AppFullScreen?
-    
+
     func reset() {
         selectedTab = .chats
         chatsPath = NavigationPath()
         contactsPath = NavigationPath()
         callsPath = NavigationPath()
         settingsPath = NavigationPath()
-        presentedSheet = nil as AppSheet?
-        presentedFullScreen = nil as AppFullScreen?
+        presentedSheet = nil
     }
-    
+}
+
+extension Router {
     func openChat(_ chatId: String) {
         selectedTab = .chats
         chatsPath.append(ChatsRoute.chat(chatId: chatId))
@@ -46,29 +45,19 @@ import SwiftUI
         selectedTab = .settings
         settingsPath.append(SettingsRoute.profile)
     }
-    
+}
+
+extension Router {
     func presentNewChat() {
         presentedSheet = .newChat
     }
-    
+
     func presentAddContact() {
         presentedSheet = .addContact
     }
-    
-    func presentIncomingCall(peerId: String) {
-        presentedFullScreen = .incomingCall(peerId: peerId)
-    }
-    
-    func presentActiveCall(peerId: String) {
-        presentedFullScreen = .activeCall(peerId: peerId)
-    }
-    
+
     func dismissSheet() {
         presentedSheet = nil
-    }
-    
-    func dismissFullScreen() {
-        presentedFullScreen = nil
     }
 }
 
@@ -109,21 +98,6 @@ enum AppSheet: Identifiable, Hashable {
             
         case .addContact:
             return "addContact"
-        }
-        
-    }
-}
-
-enum AppFullScreen: Identifiable, Hashable {
-    case incomingCall(peerId: String)
-    case activeCall(peerId: String)
-    
-    var id: String {
-        switch self {
-        case .incomingCall(let peerId):
-            return "incomingCall-\(peerId)"
-        case .activeCall(let peerId):
-            return "activeCall-\(peerId)"
         }
     }
 }
