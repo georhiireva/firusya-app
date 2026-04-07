@@ -34,12 +34,6 @@ struct ChatView: View {
         .navigationTitle(chatTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.blue)
-            }
-
             ToolbarItem(placement: .principal) {
                 VStack(spacing: 2) {
                     Text(chatTitle)
@@ -167,7 +161,22 @@ private extension ChatView {
 }
 
 #Preview {
-    NavigationStack {
-        ChatView(chatId: "id-1", currentUserId: "1", chatTitle: "Firusya")
+    ChatViewPreviewHost()
+}
+
+private struct ChatViewPreviewHost: View {
+    @State private var path = [String]()
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            Color.clear
+                .navigationDestination(for: String.self) { _ in
+                    ChatView(chatId: "id-1", currentUserId: "1", chatTitle: "Firusya")
+                }
+                .onAppear {
+                    guard path.isEmpty else { return }
+                    path.append("chat-preview")
+                }
+        }
     }
 }

@@ -68,10 +68,10 @@ private extension ChatsView {
             
             
             VStack(alignment: .leading) {
-                Text("Contact's name")
+                Text(chat.contact?.displayName ?? "Unknown contact")
                     .foregroundStyle(.primary)
                     .font(.headline)
-                Text("Last message")
+                Text(chat.lastMessageText ?? "No message")
                     .foregroundStyle(.secondary)
                     .font(.callout)
             }

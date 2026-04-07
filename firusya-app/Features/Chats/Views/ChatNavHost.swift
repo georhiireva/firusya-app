@@ -5,6 +5,7 @@
 //  Created by Рева Георгий Александрович on 04.03.2026.
 //
 import SwiftUI
+import SwiftData
 
 struct ChatNavHost: View {
     
@@ -23,6 +24,49 @@ struct ChatNavHost: View {
                         Text("Chat info \(chatId)")
                     }
                 }
+        }
+    }
+}
+
+#Preview {
+    ChatNavHost()
+        .environment(Router())
+        .modelContainer(ChatNavHostPreview.makeContainer())
+}
+
+private enum ChatNavHostPreview {
+    static func makeContainer() -> ModelContainer {
+        let schema = Schema([
+            Message.self,
+            Contact.self,
+            Chat.self,
+        ])
+        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+
+        do {
+            let container = try ModelContainer(for: schema, configurations: [configuration])
+            let context = container.mainContext
+
+            let contact = Contact(
+                id: "preview-contact",
+                displayName: "Firusya",
+                subtitle: "online"
+            )
+            let chat = Chat(
+                id: "preview-chat",
+                contact: contact,
+                peerId: contact.id,
+                title: contact.displayName,
+                lastMessageText: "Preview message",
+                lastMessageAt: Date()
+            )
+
+            context.insert(contact)
+            context.insert(chat)
+
+            return container
+        } catch {
+            fatalError("Could not create preview ModelContainer: \(error)")
         }
     }
 }
