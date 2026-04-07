@@ -1,79 +1,77 @@
-//
-//  MessageRowView.swift
-//  firusia
-//
-//  Created by Рева Георгий Александрович on 16.03.2026.
-//
 import SwiftUI
 
 struct MessageRowView: View {
     let message: Message
-    
+
+    private var isIncoming: Bool {
+        message.direction == MessageDirection.incoming.rawValue
+    }
+
     var body: some View {
-        HStack {
-            if message.direction == MessageDirection.incoming.rawValue {
+        HStack(alignment: .bottom, spacing: 0) {
+            if isIncoming {
                 bubble
-                Spacer(minLength: 48)
+                Spacer(minLength: 56)
             } else {
-                Spacer(minLength: 48)
+                Spacer(minLength: 56)
                 bubble
             }
-            
-        }.border(.red)
-        .overlay(alignment: .bottomTrailing) {
-            Text(message.createdAt, style: .time)
-                .font(.caption)
-                .padding(.bottom, 2)
-                .padding(.trailing, 10)
-                .foregroundColor(.secondary)
-
         }
     }
-    
+
     private var bubble: some View {
-        VStack(alignment: .trailing, spacing: 4) {
+        HStack(alignment: .bottom, spacing: 8) {
             Text(message.text)
-                .font(.body)
+                .font(.system(size: 17))
                 .foregroundStyle(.primary)
                 .multilineTextAlignment(.leading)
-                .border(.yellow)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Text(message.text)
-                .font(.body)
-                .foregroundStyle(.primary)
-                .multilineTextAlignment(.leading)
-                .border(.yellow)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(message.createdAt, style: .time)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 1)
+
+            if !isIncoming {
+                Image(systemName: message.deliveryState == MessageDeliveryState.read.rawValue ? "checkmark.circle.fill" : "checkmark")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(message.deliveryState == MessageDeliveryState.read.rawValue ? Color.blue : Color.secondary)
+                    .padding(.bottom, 1)
+            }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .frame(maxWidth: 280, alignment: .leading)
-        .background(bubbleBackground)
+        .background(isIncoming ? Color.white : Color(red: 0.86, green: 0.97, blue: 0.77))
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .border(.blue, width: 2.0)
-    }
-    
-    private var bubbleBackground: some View {
-        Group {
-            if message.direction == MessageDirection.incoming.rawValue {
-                Color.gray.opacity(0.22)
-            } else {
-                Color.green.opacity(0.22)
-            }
-        }
+        .shadow(color: .black.opacity(0.07), radius: 1.5, x: 0, y: 1)
+        .frame(maxWidth: 300, alignment: .trailing)
     }
 }
 
 #Preview {
-    let message = Message(
-        chatId: "String",
-        senderPeerId: "String",
-        recipientPeerId: "String",
-        text: "String",
-        direction: .outgoing,
-        deliveryState: .read
-        
-    )
-    MessageRowView(message: message)
+    VStack(spacing: 12) {
+        MessageRowView(
+            message: Message(
+                chatId: "chat-preview",
+                senderPeerId: "user-2",
+                recipientPeerId: "user-1",
+                text: "Привет! Это входящее сообщение в стиле Telegram.",
+                direction: .incoming,
+                deliveryState: .delivered
+            )
+        )
+
+        MessageRowView(
+            message: Message(
+                chatId: "chat-preview",
+                senderPeerId: "user-1",
+                recipientPeerId: "user-2",
+                text: "Да, выглядит очень похоже. Отлично!",
+                direction: .outgoing,
+                deliveryState: .read
+            )
+        )
+    }
+    .padding()
+    .background(Color(red: 0.84, green: 0.94, blue: 1.0))
 }

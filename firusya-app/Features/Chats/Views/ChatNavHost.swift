@@ -17,7 +17,7 @@ struct ChatNavHost: View {
                 .navigationDestination(for: ChatsRoute.self) { route in
                     switch route {
                     case .chat(chatId: let chatId):
-                        ChatView(chatId: chatId, currentUserId: "1", chatTitle: "Firusya", text: "12")
+                        ChatView(chatId: chatId, currentUserId: "1", chatTitle: "Firusya")
                         
                     case .chatInfo(chatId: let chatId):
                         Text("Chat info \(chatId)")
