@@ -17,7 +17,13 @@ struct CallsNavHost: View {
                 .navigationDestination(for: CallsRoute.self) { route in
                     switch route {
                     case .callDetails(let callId):
-                        Text("Call details \(callId)")
+                        Text(
+                            String(
+                                format: String(localized: "Call details %@"),
+                                locale: Locale.current,
+                                callId
+                            )
+                        )
                     }
                 }
         }

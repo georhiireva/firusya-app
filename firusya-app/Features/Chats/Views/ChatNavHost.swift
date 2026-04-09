@@ -70,7 +70,13 @@ private struct ChatInfoDestinationView: View {
     var body: some View {
         Group {
             if let chat {
-                Text("Chat info \(chat.contact.displayName)")
+                Text(
+                    String(
+                        format: String(localized: "Chat info %@"),
+                        locale: Locale.current,
+                        chat.contact.displayName
+                    )
+                )
             } else {
                 ContentUnavailableView("Chat not found", systemImage: "info.circle")
             }

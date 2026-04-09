@@ -61,6 +61,8 @@ struct MessagesRepository {
         )
 
         modelContext.insert(message)
+        chat.lastMessageText = message.text
+        chat.lastMessageAt = message.createdAt
         try modelContext.save()
 
         return message
