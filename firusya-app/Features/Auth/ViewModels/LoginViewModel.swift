@@ -20,7 +20,7 @@ import Foundation
     }
     
     func makeUser() -> User {
-        User(id: UUID().uuidString, name: normalizedDisplayName)
+        User(id: UUID(), name: normalizedDisplayName)
     }
     
     var validationMessage: String? {

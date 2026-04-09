@@ -67,7 +67,7 @@ struct MainTabView : View {
 #Preview {
     let router = Router()
     let appState = AppState(
-        session: .loggedIn(User(id: "1", name: "Alex")),
+        session: .loggedIn(User(id: UUID(), name: "Alex")),
         router: router
     )
     
