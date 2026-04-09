@@ -50,14 +50,10 @@ struct AddContactView: View {
 private extension AddContactView {
 
     func onSaveTapped() {
-        let newContact = Contact(
-            displayName: viewModel.normalizedDisplayName,
-            subtitle: viewModel.optionalNormalizedSubtitle
-        )
-        modelContext.insert(newContact)
+        let repository = ContactsRepository(modelContext: modelContext)
 
         do {
-            try modelContext.save()
+            _ = try viewModel.save(using: repository)
             router.dismissSheet()
         } catch {
             assertionFailure("Failed to save new contact: \(error)")
