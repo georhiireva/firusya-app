@@ -16,7 +16,7 @@ struct ChatsView: View {
     
     var body: some View {
         
-        List(chats) { chat in
+        List(sortedChats) { chat in
             Button {
                 router.openChat(chat)
             } label: {
@@ -36,15 +36,27 @@ struct ChatsView: View {
                 
             }
         }
-        
+    
     }
 }
 
+private extension ChatsView {
+    var sortedChats: [Chat] {
+        chats.sorted { lhs, rhs in
+            let lhsDate = lhs.lastMessageAt ?? lhs.createdAt
+            let rhsDate = rhs.lastMessageAt ?? rhs.createdAt
+
+            if lhsDate == rhsDate {
+                return lhs.createdAt > rhs.createdAt
+            }
+
+            return lhsDate > rhsDate
+        }
+    }
+}
 
 private extension ChatsView {
     func chatRow(for chat: Chat) -> some View {
-        let latestMessage = chat.latestMessage
-
         return HStack(alignment: .top) {
             if let data = chat.contact.avatar {
                 Image(uiImage: UIImage(data: data)!)
@@ -64,7 +76,7 @@ private extension ChatsView {
                 Text(chat.contact.displayName)
                     .foregroundStyle(.primary)
                     .font(.headline)
-                Text(latestMessage?.text ?? "No messages yet")
+                Text(chat.lastMessageText ?? "No messages yet")
                     .foregroundStyle(.secondary)
                     .font(.callout)
             }
@@ -74,8 +86,8 @@ private extension ChatsView {
                 .foregroundStyle(Color(.green))
                 .font(.system(size: 16))
             
-            if let latestMessage {
-                Text(latestMessage.createdAt, style: .time)
+            if let lastMessageAt = chat.lastMessageAt {
+                Text(lastMessageAt, style: .time)
                     .foregroundStyle(.tertiary)
             }
         }

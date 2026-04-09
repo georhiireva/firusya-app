@@ -73,7 +73,9 @@ private extension AppModel {
 
         let chat = Chat(
             id: previewChatID,
-            contact: primaryContact
+            contact: primaryContact,
+            lastMessageText: "Preview message",
+            lastMessageAt: Date()
         )
 
         context.insert(chat)

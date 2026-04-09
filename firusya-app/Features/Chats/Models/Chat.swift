@@ -16,15 +16,21 @@ final class Chat: Identifiable, Hashable {
     var messages: [Message] = []
 
     var createdAt: Date
+    var lastMessageText: String?
+    var lastMessageAt: Date?
     
     init(
         id: UUID = UUID(),
         contact: Contact,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        lastMessageText: String? = nil,
+        lastMessageAt: Date? = nil
     ) {
         self.id = id
         self.contact = contact
         self.createdAt = createdAt
+        self.lastMessageText = lastMessageText
+        self.lastMessageAt = lastMessageAt
     }
     
     
@@ -34,11 +40,5 @@ final class Chat: Identifiable, Hashable {
     
     static func == (lhs: Chat, rhs: Chat) -> Bool {
         lhs.id == rhs.id
-    }
-}
-
-extension Chat {
-    var latestMessage: Message? {
-        messages.max(by: { $0.createdAt < $1.createdAt })
     }
 }
