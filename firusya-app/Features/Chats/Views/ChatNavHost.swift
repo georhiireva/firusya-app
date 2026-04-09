@@ -17,13 +17,79 @@ struct ChatNavHost: View {
             ChatsView()
                 .navigationDestination(for: ChatsRoute.self) { route in
                     switch route {
-                    case .chat(chat: let chat):
-                        ChatView(chat: chat)
+                    case .chat(id: let chatID):
+                        ChatDestinationView(chatID: chatID)
                         
-                    case .chatInfo(chat: let chat):
-                        Text("Chat info \(chat.contact.displayName)")
+                    case .chatInfo(id: let chatID):
+                        ChatInfoDestinationView(chatID: chatID)
                     }
                 }
+        }
+    }
+}
+
+private struct ChatDestinationView: View {
+    let chatID: UUID
+
+    @Environment(\.modelContext) private var modelContext
+    @State private var chat: Chat?
+
+    var body: some View {
+        Group {
+            if let chat {
+                ChatView(chat: chat)
+            } else {
+                ContentUnavailableView("Chat not found", systemImage: "bubble.left.and.bubble.right")
+            }
+        }
+        .task(id: chatID) {
+            loadChat()
+        }
+    }
+}
+
+private extension ChatDestinationView {
+    func loadChat() {
+        let repository = ChatsRepository(modelContext: modelContext)
+
+        do {
+            chat = try repository.fetchChat(id: chatID)
+        } catch {
+            assertionFailure("Failed to fetch chat: \(error)")
+            chat = nil
+        }
+    }
+}
+
+private struct ChatInfoDestinationView: View {
+    let chatID: UUID
+
+    @Environment(\.modelContext) private var modelContext
+    @State private var chat: Chat?
+
+    var body: some View {
+        Group {
+            if let chat {
+                Text("Chat info \(chat.contact.displayName)")
+            } else {
+                ContentUnavailableView("Chat not found", systemImage: "info.circle")
+            }
+        }
+        .task(id: chatID) {
+            loadChat()
+        }
+    }
+}
+
+private extension ChatInfoDestinationView {
+    func loadChat() {
+        let repository = ChatsRepository(modelContext: modelContext)
+
+        do {
+            chat = try repository.fetchChat(id: chatID)
+        } catch {
+            assertionFailure("Failed to fetch chat info: \(error)")
+            chat = nil
         }
     }
 }

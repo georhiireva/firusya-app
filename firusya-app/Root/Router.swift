@@ -29,11 +29,11 @@ import SwiftUI
 extension Router {
     func openChat(_ chat: Chat) {
         selectedTab = .chats
-        chatsPath.append(ChatsRoute.chat(chat: chat))
+        chatsPath.append(ChatsRoute.chat(id: chat.id))
     }
     
     func openChatInfo(_ chat: Chat) {
-        chatsPath.append(ChatsRoute.chatInfo(chat: chat))
+        chatsPath.append(ChatsRoute.chatInfo(id: chat.id))
     }
     
     func openContact(_ contactId: UUID) {
@@ -69,8 +69,8 @@ enum AppTab: Hashable {
 }
 
 enum ChatsRoute: Hashable {
-    case chat(chat: Chat)
-    case chatInfo(chat: Chat)
+    case chat(id: UUID)
+    case chatInfo(id: UUID)
 }
 
 enum ContactsRoute: Hashable {
