@@ -11,20 +11,34 @@ import SwiftData
 struct ContactProfileView: View {
     
     let contactId: UUID
-    @Query private var contacts: [Contact]
+    @Environment(\.modelContext) private var modelContext
+    @State private var viewModel = ContactProfileViewModel()
     
     var body: some View {
         Group {
-            if let contact = contacts.first(where: { $0.id == contactId }) {
+            if let contact = viewModel.contact {
                 content(for: contact)
             } else {
                 ContentUnavailableView("Contact not found", systemImage: "person.crop.circle.badge.exclamationmark")
             }
         }
+        .task(id: contactId) {
+            loadContact()
+        }
     }
 }
 
 private extension ContactProfileView {
+    func loadContact() {
+        let repository = ContactsRepository(modelContext: modelContext)
+
+        do {
+            try viewModel.loadContact(id: contactId, using: repository)
+        } catch {
+            assertionFailure("Failed to fetch contact: \(error)")
+        }
+    }
+
     func content(for contact: Contact) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "person.crop.circle.fill")

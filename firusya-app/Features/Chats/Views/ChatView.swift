@@ -5,21 +5,8 @@ struct ChatView: View {
     let chat: Chat
 
     @State private var viewModel = ChatViewModel()
-    @Query private var messages: [Message]
 
     @Environment(\.modelContext) private var modelContext: ModelContext
-
-    init(chat: Chat) {
-        self.chat = chat
-        let chatID = chat.id
-        _messages = Query(
-            filter: #Predicate<Message> {
-                $0.chat.id == chatID
-            },
-            sort: \.createdAt,
-            order: .forward
-        )
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -48,6 +35,9 @@ struct ChatView: View {
         .toolbarBackground(.white, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .background(chatBackground.ignoresSafeArea())
+        .task(id: chat.id) {
+            loadMessages()
+        }
     }
 }
 
@@ -56,10 +46,18 @@ private extension ChatView {
         return ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 6) {
-                    ForEach(messages, id: \.persistentModelID) { message in
+                    if viewModel.isLoadingHistory {
+                        ProgressView()
+                            .padding(.vertical, 8)
+                    }
+
+                    ForEach(viewModel.messages, id: \.persistentModelID) { message in
                         MessageRowView(message: message)
                             .id(message.id)
                             .padding(.horizontal, 12)
+                            .onAppear {
+                                loadOlderMessagesIfNeeded(triggeredBy: message)
+                            }
                     }
                 }
                 .padding(.top, 8)
@@ -67,24 +65,59 @@ private extension ChatView {
             }
             .scrollDismissesKeyboard(.interactively)
             .defaultScrollAnchor(.bottom)
-            .onAppear {
-                scrollToBottom(proxy: proxy, animated: false, messages: messages)
-            }
-            .onChange(of: messages.count) { _, _ in
-                scrollToBottom(proxy: proxy, animated: true, messages: messages)
+            .onChange(of: viewModel.messages.count) { _, _ in
+                handleMessageListUpdate(with: proxy)
             }
         }
     }
 
-    func scrollToBottom(proxy: ScrollViewProxy, animated: Bool, messages: [Message]) {
-        guard let lastId = messages.last?.id else { return }
+    func loadMessages() {
+        let repository = MessagesRepository(modelContext: modelContext)
 
+        do {
+            try viewModel.loadInitialMessages(for: chat, using: repository)
+        } catch {
+            assertionFailure("Failed to fetch messages: \(error)")
+        }
+    }
+
+    func loadOlderMessagesIfNeeded(triggeredBy message: Message) {
+        let repository = MessagesRepository(modelContext: modelContext)
+
+        do {
+            _ = try viewModel.loadOlderMessagesIfNeeded(
+                for: chat,
+                triggerMessageID: message.id,
+                using: repository
+            )
+        } catch {
+            assertionFailure("Failed to fetch older messages: \(error)")
+        }
+    }
+
+    func handleMessageListUpdate(with proxy: ScrollViewProxy) {
+        switch viewModel.consumePendingListUpdate() {
+        case .none:
+            break
+
+        case .initialLoad(let bottomMessageID):
+            scroll(to: bottomMessageID, in: proxy, anchor: .bottom, animated: false)
+
+        case .appendedMessage(let bottomMessageID):
+            scroll(to: bottomMessageID, in: proxy, anchor: .bottom, animated: true)
+
+        case .prependedHistory(let anchorMessageID):
+            scroll(to: anchorMessageID, in: proxy, anchor: .top, animated: false)
+        }
+    }
+
+    func scroll(to messageID: UUID, in proxy: ScrollViewProxy, anchor: UnitPoint, animated: Bool) {
         if animated {
             withAnimation(.easeOut(duration: 0.25)) {
-                proxy.scrollTo(lastId, anchor: .bottom)
+                proxy.scrollTo(messageID, anchor: anchor)
             }
         } else {
-            proxy.scrollTo(lastId, anchor: .bottom)
+            proxy.scrollTo(messageID, anchor: anchor)
         }
     }
 
@@ -134,7 +167,7 @@ private extension ChatView {
     }
 
     func sendMessage(in chat: Chat) {
-        let repository = ChatsRepository(modelContext: modelContext)
+        let repository = MessagesRepository(modelContext: modelContext)
 
         do {
             try viewModel.sendMessage(in: chat, using: repository)
@@ -160,22 +193,29 @@ private extension ChatView {
 }
 
 private struct ChatViewPreviewHost: View {
-    @Query private var chats: [Chat]
+    @Environment(\.modelContext) private var modelContext
+    @State private var previewChat: Chat?
 
     var body: some View {
         NavigationStack {
-            if let chat = chats.first {
+            if let chat = previewChat {
                 ChatView(chat: chat)
             }
         }
+        .task {
+            loadPreviewChat()
+        }
     }
+}
 
-    init() {
-        let previewChatID = AppModel.previewChatID
-        _chats = Query(
-            filter: #Predicate<Chat> {
-                $0.id == previewChatID
-            }
-        )
+private extension ChatViewPreviewHost {
+    func loadPreviewChat() {
+        let repository = ChatsRepository(modelContext: modelContext)
+
+        do {
+            previewChat = try repository.fetchChat(id: AppModel.previewChatID)
+        } catch {
+            assertionFailure("Failed to fetch preview chat: \(error)")
+        }
     }
 }
