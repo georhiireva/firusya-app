@@ -5,6 +5,7 @@
 //  Created by Рева Георгий Александрович on 06.03.2026.
 //
 import Foundation
+import SwiftData
 
 @Observable final class AppState {
     var session: SessionState
@@ -23,13 +24,16 @@ import Foundation
         self.appPhase = appPhase
     }
     
-    func bootStrap() async {
+    func bootStrap(using modelContext: ModelContext) async {
         guard hasBootstrapped == false else { return }
         hasBootstrapped = true
         
-        // TODO: initialize app
-        
-        
+        do {
+            try AppModel.seedIfNeeded(in: modelContext)
+        } catch {
+            assertionFailure("Failed to bootstrap app data: \(error)")
+        }
+
         appPhase = .ready
     }
     
@@ -54,4 +58,3 @@ enum SessionState: Hashable {
     case loggedOut
     case loggedIn(User)
 }
-

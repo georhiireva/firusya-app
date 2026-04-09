@@ -4,7 +4,7 @@ struct MessageRowView: View {
     let message: Message
 
     private var isIncoming: Bool {
-        message.direction == MessageDirection.incoming.rawValue
+        message.direction == .incoming
     }
 
     var body: some View {
@@ -33,9 +33,9 @@ struct MessageRowView: View {
                 .padding(.bottom, 1)
 
             if !isIncoming {
-                Image(systemName: message.deliveryState == MessageDeliveryState.read.rawValue ? "checkmark.circle.fill" : "checkmark")
+                Image(systemName: message.deliveryState == .read ? "checkmark.circle.fill" : "checkmark")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(message.deliveryState == MessageDeliveryState.read.rawValue ? Color.blue : Color.secondary)
+                    .foregroundStyle(message.deliveryState == .read ? Color.blue : Color.secondary)
                     .padding(.bottom, 1)
             }
         }
@@ -52,9 +52,7 @@ struct MessageRowView: View {
     VStack(spacing: 12) {
         MessageRowView(
             message: Message(
-                chatId: "chat-preview",
-                senderPeerId: "user-2",
-                recipientPeerId: "user-1",
+                chat: Chat(contact: Contact(id: "preview-contact-1", displayName: "Alex", subtitle: nil)),
                 text: "Привет! Это входящее сообщение в стиле Telegram.",
                 direction: .incoming,
                 deliveryState: .delivered
@@ -63,9 +61,7 @@ struct MessageRowView: View {
 
         MessageRowView(
             message: Message(
-                chatId: "chat-preview",
-                senderPeerId: "user-1",
-                recipientPeerId: "user-2",
+                chat: Chat(contact: Contact(id: "preview-contact-2", displayName: "Alex", subtitle: nil)),
                 text: "Да, выглядит очень похоже. Отлично!",
                 direction: .outgoing,
                 deliveryState: .read

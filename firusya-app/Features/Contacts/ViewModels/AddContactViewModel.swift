@@ -17,9 +17,13 @@ import SwiftUI
     var normalizedSubtitle: String {
         form.subtitle.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    var optionalNormalizedSubtitle: String? {
+        let subtitle = normalizedSubtitle
+        return subtitle.isEmpty ? nil : subtitle
+    }
     
     var canSave: Bool {
-        form.displayName.isEmpty == false
+        normalizedDisplayName.isEmpty == false
     }
 }
-

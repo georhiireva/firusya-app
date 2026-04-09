@@ -5,6 +5,7 @@
 //  Created by Рева Георгий Александрович on 04.03.2026.
 //
 import SwiftUI
+import SwiftData
 
 struct MainTabView : View {
     @Environment(Router.self) private var router
@@ -74,4 +75,5 @@ struct MainTabView : View {
         .environment(appState)
         .environment(router)
         .environment(\.locale, .init(identifier: "ru"))
+        .modelContainer(AppModel.makePreviewContainer())
 }

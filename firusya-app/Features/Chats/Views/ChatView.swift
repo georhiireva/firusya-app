@@ -2,24 +2,19 @@ import SwiftUI
 import SwiftData
 
 struct ChatView: View {
-    let chatId: String
-    let currentUserId: String
-    let chatTitle: String
+    let chat: Chat
 
     @State private var text: String = ""
-
     @Query private var messages: [Message]
 
     @Environment(\.modelContext) private var modelContext: ModelContext
 
-    init(chatId: String, currentUserId: String, chatTitle: String) {
-        self.chatId = chatId
-        self.currentUserId = currentUserId
-        self.chatTitle = chatTitle
-
+    init(chat: Chat) {
+        self.chat = chat
+        let chatID = chat.id
         _messages = Query(
             filter: #Predicate<Message> {
-                $0.chatId == chatId
+                $0.chat.id == chatID
             },
             sort: \.createdAt,
             order: .forward
@@ -28,15 +23,15 @@ struct ChatView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            messageList
-            inputBar
+            messageList(for: chat)
+            inputBar(for: chat)
         }
-        .navigationTitle(chatTitle)
+        .navigationTitle(chat.contact.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack(spacing: 2) {
-                    Text(chatTitle)
+                    Text(chat.contact.displayName)
                         .font(.system(size: 17, weight: .semibold))
                     Text("online")
                         .font(.system(size: 12))
@@ -57,8 +52,8 @@ struct ChatView: View {
 }
 
 private extension ChatView {
-    var messageList: some View {
-        ScrollViewReader { proxy in
+    func messageList(for chat: Chat) -> some View {
+        return ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 6) {
                     ForEach(messages, id: \.persistentModelID) { message in
@@ -73,15 +68,15 @@ private extension ChatView {
             .scrollDismissesKeyboard(.interactively)
             .defaultScrollAnchor(.bottom)
             .onAppear {
-                scrollToBottom(proxy: proxy, animated: false)
+                scrollToBottom(proxy: proxy, animated: false, messages: messages)
             }
             .onChange(of: messages.count) { _, _ in
-                scrollToBottom(proxy: proxy, animated: true)
+                scrollToBottom(proxy: proxy, animated: true, messages: messages)
             }
         }
     }
 
-    func scrollToBottom(proxy: ScrollViewProxy, animated: Bool) {
+    func scrollToBottom(proxy: ScrollViewProxy, animated: Bool, messages: [Message]) {
         guard let lastId = messages.last?.id else { return }
 
         if animated {
@@ -93,7 +88,7 @@ private extension ChatView {
         }
     }
 
-    var inputBar: some View {
+    func inputBar(for chat: Chat) -> some View {
         HStack(alignment: .center, spacing: 8) {
             Button {
                 // attachment
@@ -116,7 +111,7 @@ private extension ChatView {
                             .foregroundStyle(.secondary)
                     } else {
                         Button {
-                            sendMessage()
+                            sendMessage(in: chat)
                         } label: {
                             Image(systemName: "arrow.up.circle.fill")
                                 .font(.system(size: 26))
@@ -138,20 +133,24 @@ private extension ChatView {
         .background(Color(.systemGray6))
     }
 
-    func sendMessage() {
+    func sendMessage(in chat: Chat) {
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedText.isEmpty else { return }
 
         let message = Message(
-            chatId: chatId,
-            senderPeerId: currentUserId,
-            recipientPeerId: "receiver",
+            chat: chat,
             text: trimmedText,
             direction: .outgoing,
             deliveryState: .sending
         )
         modelContext.insert(message)
-        text = ""
+
+        do {
+            try modelContext.save()
+            text = ""
+        } catch {
+            assertionFailure("Failed to save message: \(error)")
+        }
     }
 
     var chatBackground: some View {
@@ -171,18 +170,22 @@ private extension ChatView {
 }
 
 private struct ChatViewPreviewHost: View {
-    @State private var path = [String]()
+    @Query private var chats: [Chat]
 
     var body: some View {
-        NavigationStack(path: $path) {
-            Color.clear
-                .navigationDestination(for: String.self) { _ in
-                    ChatView(chatId: "id-1", currentUserId: "1", chatTitle: "Firusya")
-                }
-                .onAppear {
-                    guard path.isEmpty else { return }
-                    path.append("chat-preview")
-                }
+        NavigationStack {
+            if let chat = chats.first {
+                ChatView(chat: chat)
+            }
         }
+    }
+
+    init() {
+        let previewChatID = AppModel.previewChatID
+        _chats = Query(
+            filter: #Predicate<Chat> {
+                $0.id == previewChatID
+            }
+        )
     }
 }
