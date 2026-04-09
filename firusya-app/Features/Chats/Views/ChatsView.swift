@@ -11,7 +11,6 @@ import SwiftData
 struct ChatsView: View {
     
     @Environment(Router.self) private var router
-    @State private var viewModel = ChatsViewModel()
     @Query(sort: \Chat.createdAt, order: .reverse) private var chats: [Chat]
 
     
@@ -19,7 +18,7 @@ struct ChatsView: View {
         
         List(chats) { chat in
             Button {
-                viewModel.onChatTapped(chat, using: router)
+                router.openChat(chat)
             } label: {
                 chatRow(for: chat)
             }
@@ -30,7 +29,7 @@ struct ChatsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    viewModel.onComposeTapped(using: router)
+                    router.presentNewChat()
                 } label: {
                     Image(systemName: "square.and.pencil")
                 }

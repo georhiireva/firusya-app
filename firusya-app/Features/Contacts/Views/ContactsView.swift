@@ -11,13 +11,12 @@ import SwiftData
 struct ContactsView: View {
     
     @Environment(Router.self) private var router
-    @State private var viewModel: ContactsViewModel = ContactsViewModel()
     @Query(sort: \Contact.displayName) private var contacts: [Contact]
     
     var body: some View {
         List(contacts) { contact in
             Button {
-                viewModel.onContactTapped(contact, using: router)
+                router.openContact(contact.id)
             } label: {
                 contactRow(for: contact)
             }
@@ -27,7 +26,7 @@ struct ContactsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    viewModel.onAddTapped(using: router)
+                    router.presentAddContact()
                 } label: {
                     Image(systemName: "plus")
                 }
