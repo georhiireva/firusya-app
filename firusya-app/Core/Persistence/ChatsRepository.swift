@@ -24,6 +24,25 @@ enum ChatLookupResult {
 struct ChatsRepository {
     let modelContext: ModelContext
 
+    func fetchChats() throws -> [Chat] {
+        try modelContext.fetch(
+            FetchDescriptor<Chat>(
+                sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+            )
+        )
+    }
+
+    func fetchChat(id: UUID) throws -> Chat? {
+        var descriptor = FetchDescriptor<Chat>(
+            predicate: #Predicate<Chat> { chat in
+                chat.id == id
+            }
+        )
+        descriptor.fetchLimit = 1
+
+        return try modelContext.fetch(descriptor).first
+    }
+
     func openOrCreateChat(for contact: Contact) throws -> ChatLookupResult {
         if let chat = try existingChat(for: contact) {
             return .existing(chat)
@@ -34,26 +53,6 @@ struct ChatsRepository {
         try modelContext.save()
 
         return .created(chat)
-    }
-
-    @discardableResult
-    func sendMessage(
-        text: String,
-        in chat: Chat,
-        direction: MessageDirection = .outgoing,
-        deliveryState: MessageDeliveryState = .sending
-    ) throws -> Message {
-        let message = Message(
-            chat: chat,
-            text: text,
-            direction: direction,
-            deliveryState: deliveryState
-        )
-
-        modelContext.insert(message)
-        try modelContext.save()
-
-        return message
     }
 }
 

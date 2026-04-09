@@ -14,7 +14,7 @@ import SwiftUI
         router.openContact(contact.id)
     }
     
-func onAddTapped(using router: Router) {
+    func onAddTapped(using router: Router) {
         router.presentAddContact()
     }
 }

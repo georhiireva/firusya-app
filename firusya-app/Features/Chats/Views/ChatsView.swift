@@ -11,14 +11,15 @@ import SwiftData
 struct ChatsView: View {
     
     @Environment(Router.self) private var router
-    @Query(sort: \Chat.createdAt, order: .reverse) private var allChats: [Chat]
+    @State private var viewModel = ChatsViewModel()
+    @Query(sort: \Chat.createdAt, order: .reverse) private var chats: [Chat]
 
     
     var body: some View {
         
-        List(allChats) { chat in
+        List(chats) { chat in
             Button {
-                navigateToChat(with: chat)
+                viewModel.onChatTapped(chat, using: router)
             } label: {
                 chatRow(for: chat)
             }
@@ -29,7 +30,7 @@ struct ChatsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    navigateToNewChat()
+                    viewModel.onComposeTapped(using: router)
                 } label: {
                     Image(systemName: "square.and.pencil")
                 }
@@ -37,14 +38,6 @@ struct ChatsView: View {
             }
         }
         
-    }
-    
-    func navigateToChat(with chat: Chat) {
-        router.openChat(chat)
-    }
-    
-    func navigateToNewChat() {
-        router.presentNewChat()
     }
 }
 
