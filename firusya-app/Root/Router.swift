@@ -32,11 +32,11 @@ extension Router {
         chatsPath.append(ChatsRoute.chat(chat: chat))
     }
     
-    func openChatInfo(_ chatId: String) {
-        chatsPath.append(ChatsRoute.chatInfo(chatId: chatId))
+    func openChatInfo(_ chat: Chat) {
+        chatsPath.append(ChatsRoute.chatInfo(chat: chat))
     }
     
-    func openContact(_ contactId: String) {
+    func openContact(_ contactId: UUID) {
         selectedTab = .contacts
         contactsPath.append(ContactsRoute.contactProfile(contactId: contactId))
     }
@@ -70,11 +70,11 @@ enum AppTab: Hashable {
 
 enum ChatsRoute: Hashable {
     case chat(chat: Chat)
-    case chatInfo(chatId: String)
+    case chatInfo(chat: Chat)
 }
 
 enum ContactsRoute: Hashable {
-    case contactProfile(contactId: String)
+    case contactProfile(contactId: UUID)
 }
 
 enum CallsRoute: Hashable {

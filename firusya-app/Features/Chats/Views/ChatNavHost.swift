@@ -20,8 +20,8 @@ struct ChatNavHost: View {
                     case .chat(chat: let chat):
                         ChatView(chat: chat)
                         
-                    case .chatInfo(chatId: let chatId):
-                        Text("Chat info \(chatId)")
+                    case .chatInfo(chat: let chat):
+                        Text("Chat info \(chat.contact.displayName)")
                     }
                 }
         }

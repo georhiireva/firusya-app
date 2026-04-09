@@ -52,7 +52,7 @@ struct MessageRowView: View {
     VStack(spacing: 12) {
         MessageRowView(
             message: Message(
-                chat: Chat(contact: Contact(id: "preview-contact-1", displayName: "Alex", subtitle: nil)),
+                chat: Chat(contact: Contact(id: UUID(uuidString: "10000000-0000-0000-0000-000000000001")!, displayName: "Alex", subtitle: nil)),
                 text: "Привет! Это входящее сообщение в стиле Telegram.",
                 direction: .incoming,
                 deliveryState: .delivered
@@ -61,7 +61,7 @@ struct MessageRowView: View {
 
         MessageRowView(
             message: Message(
-                chat: Chat(contact: Contact(id: "preview-contact-2", displayName: "Alex", subtitle: nil)),
+                chat: Chat(contact: Contact(id: UUID(uuidString: "10000000-0000-0000-0000-000000000002")!, displayName: "Alex", subtitle: nil)),
                 text: "Да, выглядит очень похоже. Отлично!",
                 direction: .outgoing,
                 deliveryState: .read

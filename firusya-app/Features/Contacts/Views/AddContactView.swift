@@ -51,7 +51,6 @@ private extension AddContactView {
 
     func onSaveTapped() {
         let newContact = Contact(
-            id: UUID().uuidString,
             displayName: viewModel.normalizedDisplayName,
             subtitle: viewModel.optionalNormalizedSubtitle
         )

@@ -10,7 +10,7 @@ import SwiftData
 @Model
 final class Contact: Identifiable, Hashable {
     @Attribute(.unique)
-    var id: String
+    var id: UUID
     var displayName: String
     var subtitle: String?
     @Attribute(.externalStorage)
@@ -18,7 +18,7 @@ final class Contact: Identifiable, Hashable {
     @Relationship(deleteRule: .cascade)
     var chats: [Chat] = []
     
-    init(id: String, displayName: String, subtitle: String?, avatar: Data? = nil) {
+    init(id: UUID = UUID(), displayName: String, subtitle: String?, avatar: Data? = nil) {
         self.id = id
         self.displayName = displayName
         self.subtitle = subtitle
@@ -36,14 +36,14 @@ final class Contact: Identifiable, Hashable {
 
 extension Contact {
     static let seedData: [ContactSeed] = [
-        ContactSeed(id: "contact-1", displayName: "Oleg Johnson", subtitle: nil),
-        ContactSeed(id: "contact-2", displayName: "Kulib Doppers", subtitle: "Занят"),
-        ContactSeed(id: "contact-3", displayName: "Margo Vans", subtitle: "На связи"),
+        ContactSeed(id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!, displayName: "Oleg Johnson", subtitle: nil),
+        ContactSeed(id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!, displayName: "Kulib Doppers", subtitle: "Занят"),
+        ContactSeed(id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!, displayName: "Margo Vans", subtitle: "На связи"),
     ]
 }
 
 struct ContactSeed: Sendable {
-    let id: String
+    let id: UUID
     let displayName: String
     let subtitle: String?
 }
