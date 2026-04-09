@@ -50,18 +50,24 @@ struct AddContactView: View {
 private extension AddContactView {
 
     func onSaveTapped() {
-        let newConact = Contact(
+        let newContact = Contact(
             id: UUID().uuidString,
             displayName: viewModel.normalizedDisplayName,
-            subtitle: viewModel.normalizedSubtitle,
+            subtitle: viewModel.optionalNormalizedSubtitle
         )
-        modelContext.insert(newConact)
-        router.dismissSheet()
+        modelContext.insert(newContact)
+
+        do {
+            try modelContext.save()
+            router.dismissSheet()
+        } catch {
+            assertionFailure("Failed to save new contact: \(error)")
+        }
     }
 }
 
 #Preview {
     AddContactView()
         .environment(Router())
-        .environment(ContactsStore())
+        .modelContainer(AppModel.makePreviewContainer())
 }

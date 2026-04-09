@@ -64,7 +64,8 @@ private extension ContactsView {
 #Preview {
     NavigationStack {
         ContactsView()
-        .environment(\.locale, .init(identifier: "ru"))
-        .environment(Router())
+            .environment(\.locale, .init(identifier: "ru"))
+            .environment(Router())
     }
+    .modelContainer(AppModel.makePreviewContainer())
 }

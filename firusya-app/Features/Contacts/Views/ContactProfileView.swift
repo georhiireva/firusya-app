@@ -29,13 +29,20 @@ private extension ContactProfileView {
         VStack(spacing: 16) {
             Image(systemName: "person.crop.circle.fill")
                 .font(.system(size: 72))
+                .foregroundStyle(.secondary)
             
-            Text("Contact profile")
+            Text(contact.displayName)
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Contact id: \(contactId)")
-                .foregroundStyle(.secondary)
+            if let subtitle = contact.subtitle, subtitle.isEmpty == false {
+                Text(subtitle)
+                    .foregroundStyle(.secondary)
+            }
+
+            Text("Contact id: \(contact.id)")
+                .font(.footnote)
+                .foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
@@ -45,6 +52,8 @@ private extension ContactProfileView {
 
 
 #Preview {
-    ContactProfileView(contactId: "contact-1")
-        .environment(ContactsStore())
+    NavigationStack {
+        ContactProfileView(contactId: "contact-1")
+    }
+    .modelContainer(AppModel.makePreviewContainer())
 }

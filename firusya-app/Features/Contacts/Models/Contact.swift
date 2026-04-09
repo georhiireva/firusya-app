@@ -34,10 +34,15 @@ final class Contact: Identifiable, Hashable {
 }
 
 extension Contact {
-    static let mock: [Contact] = [
-        Contact(id: "id-1", displayName: "Oleg Johnson", subtitle: nil),
-        Contact(id: "id-2", displayName: "Kulib Doppers", subtitle: "Занят"),
-        Contact(id: "id-3", displayName: "Margo Vans", subtitle: "На связи"),
-        
+    static let seedData: [ContactSeed] = [
+        ContactSeed(id: "contact-1", displayName: "Oleg Johnson", subtitle: nil),
+        ContactSeed(id: "contact-2", displayName: "Kulib Doppers", subtitle: "Занят"),
+        ContactSeed(id: "contact-3", displayName: "Margo Vans", subtitle: "На связи"),
     ]
+}
+
+struct ContactSeed: Sendable {
+    let id: String
+    let displayName: String
+    let subtitle: String?
 }

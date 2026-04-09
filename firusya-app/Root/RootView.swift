@@ -5,10 +5,12 @@
 //  Created by Рева Георгий Александрович on 04.03.2026.
 //
 import SwiftUI
+import SwiftData
 
 struct RootView: View {
     
     @Environment(AppState.self) private var appState
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         Group {
@@ -26,8 +28,7 @@ struct RootView: View {
             }
         }
         .task {
-            await appState.bootStrap()
+            await appState.bootStrap(using: modelContext)
         }
     }
 }
-

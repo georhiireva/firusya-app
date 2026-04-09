@@ -92,4 +92,5 @@ private extension ChatsView {
         ChatsView()
             .environment(Router())
     }
+    .modelContainer(AppModel.makePreviewContainer())
 }

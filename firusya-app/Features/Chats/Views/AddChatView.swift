@@ -92,4 +92,5 @@ private extension AddChatView {
 #Preview {
     AddChatView()
         .environment(Router())
+        .modelContainer(AppModel.makePreviewContainer())
 }
