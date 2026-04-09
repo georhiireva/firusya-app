@@ -12,7 +12,6 @@ struct AddChatView: View {
     @Environment(\.modelContext) private var modelContext
 
     @Query(sort: \Contact.displayName) private var contacts: [Contact]
-    @Query private var chats: [Chat]
     
     var body: some View {
         NavigationStack {
@@ -40,15 +39,12 @@ private extension AddChatView {
     func onContactTapped(_ contact: Contact) {
         if let existingChat = existingChat(for: contact) {
             router.dismissSheet()
-            router.openChat(existingChat.id.uuidString)
+            router.openChat(existingChat)
             return
         }
 
         let newChat = Chat(
-            id: UUID().uuidString,
-            contact: contact,
-            peerId: contact.id,
-            title: contact.displayName
+            contact: contact
         )
 
         modelContext.insert(newChat)
@@ -56,14 +52,14 @@ private extension AddChatView {
         do {
             try modelContext.save()
             router.dismissSheet()
-            router.openChat(newChat.id.uuidString)
+            router.openChat(newChat)
         } catch {
             assertionFailure("Failed to save new chat: \(error)")
         }
     }
 
     func existingChat(for contact: Contact) -> Chat? {
-        chats.first { $0.contact?.id == contact.id }
+        contact.chats.first
     }
 
     func contactRow(for contact: Contact) -> some View {

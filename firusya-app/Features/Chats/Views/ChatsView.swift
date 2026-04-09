@@ -11,8 +11,7 @@ import SwiftData
 struct ChatsView: View {
     
     @Environment(Router.self) private var router
-    @Environment(\.modelContext) private var context
-    @Query private var allChats: [Chat]
+    @Query(sort: \Chat.createdAt, order: .reverse) private var allChats: [Chat]
 
     
     var body: some View {
@@ -41,7 +40,7 @@ struct ChatsView: View {
     }
     
     func navigateToChat(with chat: Chat) {
-        router.openChat(chat.id.uuidString)
+        router.openChat(chat)
     }
     
     func navigateToNewChat() {
@@ -52,8 +51,10 @@ struct ChatsView: View {
 
 private extension ChatsView {
     func chatRow(for chat: Chat) -> some View {
-        HStack(alignment: .top) {
-            if let data = chat.contact?.avatar {
+        let latestMessage = chat.latestMessage
+
+        return HStack(alignment: .top) {
+            if let data = chat.contact.avatar {
                 Image(uiImage: UIImage(data: data)!)
                     .resizable()
                     .scaledToFill()
@@ -68,10 +69,10 @@ private extension ChatsView {
             
             
             VStack(alignment: .leading) {
-                Text(chat.contact?.displayName ?? "Unknown contact")
+                Text(chat.contact.displayName)
                     .foregroundStyle(.primary)
                     .font(.headline)
-                Text(chat.lastMessageText ?? "No message")
+                Text(latestMessage?.text ?? "No messages yet")
                     .foregroundStyle(.secondary)
                     .font(.callout)
             }
@@ -81,8 +82,10 @@ private extension ChatsView {
                 .foregroundStyle(Color(.green))
                 .font(.system(size: 16))
             
-            Text("22:15")
-                .foregroundStyle(.tertiary)
+            if let latestMessage {
+                Text(latestMessage.createdAt, style: .time)
+                    .foregroundStyle(.tertiary)
+            }
         }
     }
 }

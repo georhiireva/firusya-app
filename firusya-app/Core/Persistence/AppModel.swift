@@ -9,6 +9,8 @@ import Foundation
 import SwiftData
 
 enum AppModel {
+    static let previewChatID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+
     static let schema = Schema([
         Message.self,
         Contact.self,
@@ -70,20 +72,14 @@ private extension AppModel {
         guard let primaryContact = contacts.first else { return }
 
         let chat = Chat(
-            id: "preview-chat",
-            contact: primaryContact,
-            peerId: primaryContact.id,
-            title: primaryContact.displayName,
-            lastMessageText: "Preview message",
-            lastMessageAt: Date()
+            id: previewChatID,
+            contact: primaryContact
         )
 
         context.insert(chat)
         context.insert(
             Message(
-                chatId: chat.id.uuidString,
-                senderPeerId: primaryContact.id,
-                recipientPeerId: "1",
+                chat: chat,
                 text: "Preview message",
                 direction: .incoming,
                 deliveryState: .read

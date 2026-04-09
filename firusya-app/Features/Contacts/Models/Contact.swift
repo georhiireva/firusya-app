@@ -4,8 +4,7 @@
 //
 //  Created by Рева Георгий Александрович on 09.03.2026.
 //
-
-import SwiftUI
+import Foundation
 import SwiftData
 
 @Model
@@ -16,6 +15,8 @@ final class Contact: Identifiable, Hashable {
     var subtitle: String?
     @Attribute(.externalStorage)
     var avatar: Data?
+    @Relationship(deleteRule: .cascade)
+    var chats: [Chat] = []
     
     init(id: String, displayName: String, subtitle: String?, avatar: Data? = nil) {
         self.id = id

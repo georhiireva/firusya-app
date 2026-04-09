@@ -27,9 +27,9 @@ import SwiftUI
 }
 
 extension Router {
-    func openChat(_ chatId: String) {
+    func openChat(_ chat: Chat) {
         selectedTab = .chats
-        chatsPath.append(ChatsRoute.chat(chatId: chatId))
+        chatsPath.append(ChatsRoute.chat(chat: chat))
     }
     
     func openChatInfo(_ chatId: String) {
@@ -69,7 +69,7 @@ enum AppTab: Hashable {
 }
 
 enum ChatsRoute: Hashable {
-    case chat(chatId: String)
+    case chat(chat: Chat)
     case chatInfo(chatId: String)
 }
 
