@@ -9,6 +9,6 @@ import SwiftUI
 
 struct CallsView: View {
     var body: some View {
-        Text("CallsView")
+        Text("Calls")
     }
 }

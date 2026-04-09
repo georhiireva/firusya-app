@@ -40,7 +40,13 @@ private extension ContactProfileView {
                     .foregroundStyle(.secondary)
             }
 
-            Text("Contact id: \(contact.id)")
+            Text(
+                String(
+                    format: String(localized: "Contact id: %@"),
+                    locale: Locale.current,
+                    contact.id.uuidString
+                )
+            )
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
         }

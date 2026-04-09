@@ -31,7 +31,7 @@ import Foundation
         }
         
         if name.count > 30 {
-            return "Display name must be 30 characters or less"
+            return String(localized: "Display name must be 30 characters or less")
         }
         
         return nil
