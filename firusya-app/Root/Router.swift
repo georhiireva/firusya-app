@@ -36,7 +36,7 @@ extension Router {
         chatsPath.append(ChatsRoute.chatInfo(chatId: chatId))
     }
     
-    func openContact(_ contactId: String) {
+    func openContact(_ contactId: UUID) {
         selectedTab = .contacts
         contactsPath.append(ContactsRoute.contactProfile(contactId: contactId))
     }
@@ -74,7 +74,7 @@ enum ChatsRoute: Hashable {
 }
 
 enum ContactsRoute: Hashable {
-    case contactProfile(contactId: String)
+    case contactProfile(contactId: UUID)
 }
 
 enum CallsRoute: Hashable {

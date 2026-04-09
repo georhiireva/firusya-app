@@ -10,7 +10,7 @@ import SwiftData
 
 struct ContactProfileView: View {
     
-    let contactId: String
+    let contactId: UUID
     @Query private var contacts: [Contact]
     
     var body: some View {
@@ -53,7 +53,7 @@ private extension ContactProfileView {
 
 #Preview {
     NavigationStack {
-        ContactProfileView(contactId: "contact-1")
+        ContactProfileView(contactId: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!)
     }
     .modelContainer(AppModel.makePreviewContainer())
 }
