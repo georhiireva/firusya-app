@@ -4,7 +4,7 @@ import SwiftData
 struct ChatView: View {
     let chat: Chat
 
-    @State private var text: String = ""
+    @State private var viewModel = ChatViewModel()
     @Query private var messages: [Message]
 
     @Environment(\.modelContext) private var modelContext: ModelContext
@@ -100,12 +100,12 @@ private extension ChatView {
             .frame(width: 26, height: 26)
 
             HStack(alignment: .bottom, spacing: 8) {
-                TextField("Message", text: $text, axis: .vertical)
+                TextField("Message", text: $viewModel.draftText, axis: .vertical)
                     .textFieldStyle(.plain)
                     .lineLimit(1...5)
 
                 Group {
-                    if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    if viewModel.canSend == false {
                         Image(systemName: "mic.fill")
                             .font(.system(size: 17, weight: .medium))
                             .foregroundStyle(.secondary)
@@ -134,20 +134,10 @@ private extension ChatView {
     }
 
     func sendMessage(in chat: Chat) {
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedText.isEmpty else { return }
-
-        let message = Message(
-            chat: chat,
-            text: trimmedText,
-            direction: .outgoing,
-            deliveryState: .sending
-        )
-        modelContext.insert(message)
+        let repository = ChatsRepository(modelContext: modelContext)
 
         do {
-            try modelContext.save()
-            text = ""
+            try viewModel.sendMessage(in: chat, using: repository)
         } catch {
             assertionFailure("Failed to save message: \(error)")
         }

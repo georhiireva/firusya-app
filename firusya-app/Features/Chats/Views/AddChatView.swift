@@ -12,6 +12,7 @@ struct AddChatView: View {
     @Environment(\.modelContext) private var modelContext
 
     @Query(sort: \Contact.displayName) private var contacts: [Contact]
+    @State private var viewModel = AddChatViewModel()
     
     var body: some View {
         NavigationStack {
@@ -37,29 +38,15 @@ struct AddChatView: View {
 
 private extension AddChatView {
     func onContactTapped(_ contact: Contact) {
-        if let existingChat = existingChat(for: contact) {
-            router.dismissSheet()
-            router.openChat(existingChat)
-            return
-        }
-
-        let newChat = Chat(
-            contact: contact
-        )
-
-        modelContext.insert(newChat)
+        let repository = ChatsRepository(modelContext: modelContext)
 
         do {
-            try modelContext.save()
+            let chat = try viewModel.openChat(for: contact, using: repository)
             router.dismissSheet()
-            router.openChat(newChat)
+            router.openChat(chat)
         } catch {
             assertionFailure("Failed to save new chat: \(error)")
         }
-    }
-
-    func existingChat(for contact: Contact) -> Chat? {
-        contact.chats.first
     }
 
     func contactRow(for contact: Contact) -> some View {

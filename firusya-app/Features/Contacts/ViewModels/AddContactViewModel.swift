@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+enum AddContactError: Error {
+    case emptyDisplayName
+}
+
 @Observable final class AddContactViewModel {
     var form = NewContactForm()
     
@@ -25,5 +29,16 @@ import SwiftUI
     
     var canSave: Bool {
         normalizedDisplayName.isEmpty == false
+    }
+
+    func save(using repository: ContactsRepository) throws -> Contact {
+        guard canSave else {
+            throw AddContactError.emptyDisplayName
+        }
+
+        return try repository.createContact(
+            displayName: normalizedDisplayName,
+            subtitle: optionalNormalizedSubtitle
+        )
     }
 }
